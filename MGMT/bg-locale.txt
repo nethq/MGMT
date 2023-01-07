@@ -23,3 +23,4 @@ procedure_name=Име на процедура
 operation_date=Дата на операция
 medicine_name=Име на артикул
 procedure_id=Пореден номер на процедура
+operation_count=Брой операции

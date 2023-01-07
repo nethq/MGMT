@@ -15,14 +15,6 @@ namespace MGMT
         public form_main()
         {            
             InitializeComponent();
-            credentials creds = new credentials();
-            if (creds.TestConnection(true))
-            {
-                global_credentials = creds;
-                creds.ExportCredentialsToFile();
-                spec_ex = new special_executor(global_credentials);
-                grp_database_login.Visible = false;
-            }
         }
         private void btn_spravka_Click(object sender, EventArgs e)
         {
@@ -40,24 +32,38 @@ namespace MGMT
         }
         private void form_main_Load(object sender, EventArgs e)
         {
-            if(global_credentials != null && global_credentials.TestConnection() && spec_ex != null)
+            var user =InputPrompt.InputPrompt.PromptString("Моля въведете потребителско име.");
+            var password =InputPrompt.InputPrompt.PromptString("Моля въведете парола за връзка с базата.");
+            credentials creds = new credentials("mgmt-upstream.ddns.net","ferma-mgmt",user,password,"55555");
+            if (creds.TestConnection())
             {
-                cb_table_names.Items.AddRange(global_credentials.GetTablesFromDatabase());
-                cb_table_names.SelectedIndex = 0;
-                foreach (var item in spec_ex.SpecialFunctions.Keys)
+                global_credentials = creds;
+                creds.ExportCredentialsToFile();
+                spec_ex = new special_executor(global_credentials);
+                grp_database_login.Visible = false;
+                if (global_credentials != null && global_credentials.TestConnection() && spec_ex != null)
                 {
-                    Button btn = new Button();
-                    btn.Text = item; 
-                    btn.Font = this.Font;
-                    btn.ForeColor = Color.FromArgb(0, 0, 0);
-                    btn.BackColor = Color.FromArgb(255, 255, 255);
-                    btn.AutoEllipsis = true;
-                    btn.AutoSize = true;
-                    btn.Size = new Size(10, 10);
-                    btn.Click += Btn_Click;
-                    special_button_layout.Controls.Add(btn);
+                    cb_table_names.Items.AddRange(global_credentials.GetTablesFromDatabase());
+                    cb_table_names.SelectedIndex = 0;
+                    foreach (var item in spec_ex.SpecialFunctions.Keys)
+                    {
+                        Button btn = new Button();
+                        btn.Text = item;
+                        //the bold of this font
+                        btn.Font = new Font(btn.Font.FontFamily, btn.Font.Size+2);
+                        btn.BackColor = Color.FromArgb(Math.Abs(item.GetHashCode()));
+                        btn.ForeColor = Color.Black;
+                        btn.AutoEllipsis = true;
+                        btn.AutoSize = true;
+                        btn.Size = new Size(10, 10);
+                        btn.Click += Btn_Click;
+                        special_button_layout.Controls.Add(btn);
+                    }
+
                 }
-                
+            }
+            else {
+                MessageBox.Show("Неуспешна или некоректна връзка с базата данни.");
             }
         }
 
@@ -117,7 +123,6 @@ namespace MGMT
         }
         private void btn_create_medicine_Click(object sender, EventArgs e)
         {
-            //create medicine
             var thread = new System.Threading.Thread(() => new add_medicine(global_credentials).ShowDialog());
             thread.Start();
         }

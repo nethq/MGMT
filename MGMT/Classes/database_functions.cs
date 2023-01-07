@@ -294,7 +294,7 @@ namespace MGMT
                 Password = lines[3];
                 Port = lines[4];
             }
-            catch (Exception ex) { MessageBox.Show("Възникна проблем при импортирането на настройките!\n" + ex.Message); }
+            catch (Exception ex) { MessageBox.Show("Възникна проблем при импортирането на настройките! Ако запускате приложението за пръв път, моля въведете данните за връзка с сървъра.\n" + ex.Message); }
         }
         public void ImportCredentialsFromFile()//line1 = server, line2 = database, line3 = username, line4 = password
         {
