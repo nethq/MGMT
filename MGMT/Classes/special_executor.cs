@@ -60,7 +60,7 @@ public class special_executor
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Възникна проблем при изпълняването на заявката от базата данни!" + ex.Message);
+            MessageBox.Show("Възникна проблем при изпълняването на заявката от базата данни !" + ex.Message);
         }
     }
     public string PopulateSpecialRequest(string special_request)

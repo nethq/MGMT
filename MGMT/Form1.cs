@@ -50,7 +50,7 @@ namespace MGMT
                         Button btn = new Button();
                         btn.Text = item;
                         //the bold of this font
-                        btn.Font = new Font(btn.Font.FontFamily, btn.Font.Size+2);
+                        btn.Font = new Font(btn.Font.FontFamily, btn.Font.Size + 2);
                         btn.BackColor = Color.FromArgb(Math.Abs(item.GetHashCode()));
                         btn.ForeColor = Color.Black;
                         btn.AutoEllipsis = true;
@@ -59,13 +59,13 @@ namespace MGMT
                         btn.Click += Btn_Click;
                         special_button_layout.Controls.Add(btn);
                     }
-
+                    global_credentials.logToServer($"{global_credentials.Username}@{Application.UserAppDataPath}", $"LOGIN:{DateTime.Now}");
                 }
             }
             else {
                 MessageBox.Show("Неуспешна или некоректна връзка с базата данни.");
             }
-        }
+        }   
 
         private void Btn_Click(object sender, EventArgs e)
         {
