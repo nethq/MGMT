@@ -59,7 +59,7 @@ namespace MGMT
                         btn.Click += Btn_Click;
                         special_button_layout.Controls.Add(btn);
                     }
-                    global_credentials.logToServer($"{global_credentials.Username}@{Application.UserAppDataPath}", $"LOGIN:{DateTime.Now}");
+                    global_credentials.logToServer($"{global_credentials.Username}@{Application.UserAppDataPath}", $"LOGIN-{Application.ProductVersion}:{DateTime.Now}");
                 }
             }
             else {
@@ -68,7 +68,7 @@ namespace MGMT
         }   
 
         private void Btn_Click(object sender, EventArgs e)
-        {
+        {   
             var btn = sender as Button;
             if (btn == null) return;
             string special_request = spec_ex.PopulateSpecialRequest(spec_ex.SpecialFunctions[btn.Text]);
@@ -76,7 +76,8 @@ namespace MGMT
             data_grid_form show = new data_grid_form(global_credentials.QueryTranslateHeaders(special_request), btn.Text);
             if (special_request.ToUpper().Contains("SELECT"))
             {
-                show.ShowDialog();  
+                var thread = new System.Threading.Thread(() => show.ShowDialog());
+                thread.Start();
             }
         }
         
