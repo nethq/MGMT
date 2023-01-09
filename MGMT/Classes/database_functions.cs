@@ -44,6 +44,7 @@ namespace MGMT
         {
             try
             {
+                
                 //make a request and write the data to a dataset
                 var connection = new MySqlConnection(GetConnectionString());
                 connection.Open();
@@ -97,23 +98,41 @@ namespace MGMT
                 return null;
             }
         }
-        public bool AtomicMultiQuery(string[] queries, bool showErrors = true)
+        public bool logToServer(string user, string action)
         {
             try
             {
-                var connection = new MySqlConnection(GetConnectionString());
+                if (AtomicMultiQuery(new string[] { $"INSERT INTO `log` (`user`, `action`,`date`) VALUES ('{user}','{action}','{DateTime.Now.ToString("yyyy-MM-dd")}');" })) return true;
+                return false;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
+        public bool AtomicMultiQuery(string[] queries, bool showErrors = true)
+        {
+            var connection = new MySqlConnection(GetConnectionString());
+            var command = new MySqlCommand();
+            try
+            {
                 connection.Open();
-                var command = new MySqlCommand();
                 command.Connection = connection;
+                command.CommandText = "START TRANSACTION";
+                command.ExecuteNonQuery();
                 foreach (string query in queries)
                 {
                     command.CommandText = query;
                     command.ExecuteNonQuery();
                 }
+                command.CommandText = "COMMIT";
+                command.ExecuteNonQuery();
                 return true;
             }
             catch (Exception ex)
             {
+                command.CommandText = "ROLLBACK;";
+                command.ExecuteNonQuery();
                 if (showErrors)
                 {
                     MessageBox.Show("Възникна проблем при изпълняването на заявката от базата данни!" + ex.Message);
@@ -294,7 +313,7 @@ namespace MGMT
                 Password = lines[3];
                 Port = lines[4];
             }
-            catch (Exception ex) { MessageBox.Show("Възникна проблем при импортирането на настройките!\n" + ex.Message); }
+            catch (Exception ex) { MessageBox.Show("Възникна проблем при импортирането на настройките! Ако запускате приложението за пръв път, моля въведете данните за връзка с сървъра.\n" + ex.Message); }
         }
         public void ImportCredentialsFromFile()//line1 = server, line2 = database, line3 = username, line4 = password
         {
